@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import SubmitField,StringField,IntegerField
+from wtforms import SubmitField, StringField, IntegerField
 
 
 class BooksApiSearch(FlaskForm):
@@ -10,6 +10,8 @@ class BooksApiSearch(FlaskForm):
     isbn = IntegerField()
     lccn = StringField()
     oclc = StringField()
+
+
 class SearchInApi(FlaskForm):
-    search = StringField()
+    find = StringField()
     submit = SubmitField()

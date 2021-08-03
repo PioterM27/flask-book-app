@@ -1,0 +1,23 @@
+[
+  {
+    "title": "Pan Tadeusz",
+    "author": "Adam Mickiewicz",
+    "publication_date": "1834",
+    "isbn": "12345678",
+    "number_of_pages": "200",
+    "book_cover_link": "test.link",
+    "publication_language": "pl"
+  },
+  {
+    "title": "Lalka",
+    "author": "Bolesław Prus",
+    "publication_date": "1889",
+    "isbn": "23456789",
+    "number_of_pages": "500",
+    "book_cover_link": "lalka.link",
+    "publication_language": "pl"
+  }
+]
+
+
+

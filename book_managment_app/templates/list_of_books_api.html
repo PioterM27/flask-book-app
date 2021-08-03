@@ -1,0 +1,88 @@
+{%extends "base.html"%}
+
+{% block title %}
+HI
+{% endblock %}
+
+{% block navbar%}
+<ul class="nav">
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="{{url_for('add_books')}}">Add Books</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{url_for('get_books')}}">Search in Api</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{url_for('show_books')}}">Search in Library</a>
+    </li>
+</ul>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col">
+
+    </div>
+    <div class="col">
+      <form action="{{url_for('get_books')}}" method="POST">
+                    <td>{{search.find}}</td>
+                    <td><SELECT name="city">
+                        {% for c in filters %}
+                        <option value={{c}}>{{c}}</option>
+                        {% endfor %}
+                    </SELECT></td>
+                    <td>
+                        <button type="submit">Szukaj</button>
+                    </td>
+                </form>
+    </div>
+    <div class="col">
+
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+
+    </div>
+    <div class="col">
+        {% if form %}
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">First</th>
+                        <th scope="col">Last</th>
+                        <th scope="col">Handle</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for fort in form %}
+                    <tr>
+                        <form action="{{url_for('import_books',title=fort.title,author=fort.author,
+                        page_nbr=fort.number_of_pages,language=fort.publication_language,
+                        pubdate=fort.publication_date,isbn=fort.isbn,cover=fort.book_cover_link)}}" method="POST">
+                            <th scope="row">{{loop.index}}</th>
+                            <td>{{fort.title}}</td>
+                            <td>{{fort.author}}</td>
+                            <td>{{fort.number_of_pages}}</td>
+                            <td>{{fort.publication_date}}</td>
+                            <td>{{fort.publication_language}}</td>
+                            <td>{{fort.isbn}}</td>
+                            <td>
+                                <button type="submit">Importuj</button>
+                            </td>
+                        </form>
+                        >
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {%endif%}
+    </div>
+    <div class="col">
+    </div>
+  </div>
+</div>
+
+{% endblock %}
