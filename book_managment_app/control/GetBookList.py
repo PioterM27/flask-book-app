@@ -8,13 +8,13 @@ class GetBookList:
     def __init__(self, key, filter_by):
         self.filter_by = filter_by
         self.key = key
-        self.URL = f"https://www.googleapis.com/books/v1/volumes?q={self.filter_by}+{self.key}:keyes&key=AIzaSyCsgA_L-2RWCz6aTyKczoohqFasDls80_g"
+        self.URL = f"https://www.googleapis.com/books/v1/volumes?q={self.filter_by}+{self.key}:keyes&key="
 
     def get_response(self):
         response = requests.get(url=self.URL)
         list_of_books = []
         test = response.json()
-        for key in test.get("items"):
+        for key in test.get("items", []):
             book = Book()
             book.title = key.get("volumeInfo").get("title")
             book.author = key.get("volumeInfo").get("authors")
