@@ -24,6 +24,7 @@ migrate = Migrate(app, db)
 from book_managment_app.views import books
 from book_managment_app.models import Book
 from book_managment_app.models import db_manage_command
-from book_managment_app.API.GET.GetBooks import GetBooks
+from book_managment_app.API.GET.GetListBooks import GetListBooks
+from book_managment_app.API.GET.GetListBooks import GetBook
 
 # Api.add_resource(GetBook,'test')

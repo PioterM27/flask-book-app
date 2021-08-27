@@ -7,10 +7,12 @@ from book_managment_app.models.Book import Book
 class GetBooks(Resource):
     def get(self):
         books = Book.query.all()
-        book_list = []
-        for book in books:
-            book_list.append(book.return_json())
-        return jsonify({"status": 200, "data": book_list})
+        book_list = [book.return_json for book in books]
+        book_list2=[]
+        # if book_list2==33:
+        #     return jsonify({"status": 200, "data": book_list})
+        # else:
+        return jsonify({"status": 400}), 401
 
     def put(self):
         return {"dobrze": "jest"}
