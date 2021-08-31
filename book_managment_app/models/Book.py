@@ -1,4 +1,5 @@
 from book_managment_app import db
+from sqlalchemy.orm import validates
 from datetime import datetime
 
 
@@ -12,6 +13,16 @@ class Book(db.Model):
     number_of_pages = db.Column(db.Integer, nullable=False)
     book_cover_link = db.Column(db.String(3000), nullable=False)
     publication_language = db.Column(db.String(20), nullable=False)
+
+    @validates('publication_date')
+    def convert_str_to_date_type(self,key,publication_date):
+        if type(publication_date) is str:
+            publication_date = datetime.strptime(publication_date, "%Y-%m-%d")
+            return publication_date
+
+
+
+
 
     def return_json(self):
         book_to_json = {

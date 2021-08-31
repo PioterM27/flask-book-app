@@ -21,7 +21,7 @@ class AddBooks(FlaskForm):
     publication_date = DateField(
         "Publication Date",
         validators=[DataRequired(message="Date should be in format %Y")],
-        format="%Y",
+        format="%Y-%m-%d",
     )
     number_of_pages = StringField("Number of Pages", validators=[DataRequired()])
     isbn = StringField(
