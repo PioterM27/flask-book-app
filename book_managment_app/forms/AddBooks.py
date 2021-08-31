@@ -20,7 +20,7 @@ class AddBooks(FlaskForm):
     author = StringField("Author")
     publication_date = DateField(
         "Publication Date",
-        validators=[DataRequired(message="Date should be in format %Y-%m-%d")],
+        validators=[DataRequired(message="Date should be in format %Y")],
         format="%Y-%m-%d",
     )
     number_of_pages = StringField("Number of Pages", validators=[DataRequired()])
