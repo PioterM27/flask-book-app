@@ -1,5 +1,12 @@
 from flask_wtf import FlaskForm
 from wtforms import SubmitField, StringField, IntegerField
+from wtforms.validators import (
+    InputRequired,
+    Length,
+    AnyOf,
+    DataRequired,
+    ValidationError,
+)
 
 
 class BooksApiSearch(FlaskForm):
@@ -13,5 +20,8 @@ class BooksApiSearch(FlaskForm):
 
 
 class SearchInApi(FlaskForm):
-    find = StringField()
+    find = StringField(
+        label="find",
+        validators=[DataRequired()]
+    )
     submit = SubmitField()
