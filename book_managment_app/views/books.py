@@ -1,7 +1,7 @@
 import requests
 from book_managment_app import app
 from book_managment_app import db
-from flask import render_template, request, session, redirect, url_for, jsonify
+from flask import render_template, request, session, redirect, url_for, jsonify, abort
 from datetime import datetime
 from book_managment_app.models.Book import Book
 from book_managment_app.forms.BooksApiSearch import SearchInApi
@@ -23,7 +23,7 @@ def get_books():
         books_from_api = _get_data_from_app_api(f'http://localhost:5000/test/api/{key_word}/{key}')
         return render_template(
             "list_of_books_api.html",
-            form=books_from_api,
+            form=books_from_api.json(),
             search=search,
             filters=Filters.list_of_filter.keys(),
         )
@@ -51,7 +51,7 @@ def show_books():
         return render_template(
             "list_of_books_from_db_view.html",
             form2=list_of_filter,
-            form=list_of_books,
+            form=list_of_books.json(),
             searchfield=search,
         )
     elif request.method == "POST":
@@ -61,7 +61,7 @@ def show_books():
         return render_template(
             "list_of_books_from_db_view.html",
             form2=list_of_filter,
-            form=list_of_books,
+            form=list_of_books.json(),
             searchfield=search,
         )
 
@@ -93,7 +93,10 @@ def import_books():
 
 def _get_data_from_app_api(url):
     response = requests.get(url)
-    return response.json()
+    if response.status_code is not 200:
+        abort(response.status_code)
+    else:
+        return response
 
 
 def _send_post_request(url, json_data):
@@ -114,4 +117,4 @@ def _add_to_db(book_object):
         db.session.add(book_object)
         db.session.commit()
     except Exception:
-        return jsonify({'blad':'503'})
+        return jsonify({'blad': '503'})

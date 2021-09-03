@@ -12,6 +12,8 @@ class GetBookList:
 
     def get_response(self):
         response = requests.get(url=self.URL)
+        print("ttttut")
+        print(response.status_code)
         list_of_books = []
         test = response.json()
         for key in test.get("items", []):
@@ -25,14 +27,4 @@ class GetBookList:
             dict1['isbn'] = key.get("volumeInfo").get("industryIdentifiers")[0].get("identifier")
             list_of_books.append(dict1)
         return list_of_books
-        # for key in test.get("items", []):
-        #     book = Book()
-        #     book.title = key.get("volumeInfo").get("title")
-        #     book.author = key.get("volumeInfo").get("authors")
-        #     book.number_of_pages = key.get("volumeInfo").get("pageCount")
-        #     book.publication_date = key.get("volumeInfo").get("publishedDate")
-        #     book.publication_language = key.get("volumeInfo").get("language")
-        #     book.book_cover_link = key.get("volumeInfo").get("previewLink")
-        #     book.isbn = key.get("volumeInfo").get("industryIdentifiers")[0].get("identifier")
-        #     list_of_books.append(book)
-        # return list_of_books
+

@@ -23,7 +23,7 @@ class GetBook(Resource):
             book_list = [book.return_json() for book in book]
             return jsonify(book_list)
         else:
-            return jsonify({'status': 500, 'data': book[1]})
+            return jsonify({'status': 500, 'data': book[1]}), 404
 
 
 class AddBook(Resource):
