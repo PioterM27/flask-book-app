@@ -1,6 +1,7 @@
 from book_managment_app import db
 from sqlalchemy.orm import validates
 from datetime import datetime
+import re
 
 
 class Book(db.Model):
@@ -17,10 +18,12 @@ class Book(db.Model):
     @validates('publication_date')
     def convert_str_to_date_type(self,key,publication_date):
         if type(publication_date) is str:
-            publication_date = datetime.strptime(publication_date, "%Y-%m-%d")
+            format_verification = lambda publication_date: publication_date if re.search(
+                r'\d{4}[-/]\d{2}[-/]\d{2}',publication_date) else publication_date + '-01-01'
+            publication_date = format_verification(publication_date)
             return publication_date
 
-
+    # datetime.strptime(publication_date, "%Y-%m-%d")
 
 
 

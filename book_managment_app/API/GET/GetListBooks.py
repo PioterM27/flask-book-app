@@ -1,7 +1,4 @@
-import parser
-import json
-
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 from flask_restful import Resource, Api, reqparse
 from book_managment_app import app, api, db
 from book_managment_app.models.Book import Book
@@ -26,13 +23,7 @@ class GetBook(Resource):
             book_list = [book.return_json() for book in book]
             return jsonify(book_list)
         else:
-            return jsonify({'status': 500, 'data': book[1]})
-    def post(self,filters,value):
-        required_post_args = reqparse.RequestParser()
-        required_post_args.add_argument("ala", type=str,required=True)
-        args = required_post_args.parse_args()
-        add_book_object_to_db = Book(**args)
-        return jsonify({'status': 200, 'data':args,'message': 'New book has been added to Your library'})
+            return jsonify({'status': 500, 'data': book[1]}), 404
 
 
 class AddBook(Resource):
@@ -41,17 +32,29 @@ class AddBook(Resource):
 
     def post(self):
         required_post_args = reqparse.RequestParser()
-        required_post_args.add_argument("title", type=str, required=True)
-        required_post_args.add_argument("author", type=str, required=True)
-        required_post_args.add_argument("number_of_pages", type=int, required=True)
-        required_post_args.add_argument("publication_language", type=str, required=True)
-        required_post_args.add_argument("publication_date", type=str, required=True)
-        required_post_args.add_argument("book_cover_link", type=str, required=True)
-        required_post_args.add_argument("isbn", type=str, required=True)
-        args = required_post_args.parse_args()
+        args = _add_arguments_to_post_put_response(required_post_args).parse_args()
         add_book_object_to_db = Book(**args)
         _add_to_db(add_book_object_to_db)
         return jsonify({'status': 200, 'data': args, 'message': 'New book has been added to Your library'})
+
+
+class UpdateBook(Resource):
+    def put(self, book_id):
+        required_post_args = reqparse.RequestParser()
+        args_put = _add_arguments_to_post_put_response(required_post_args).parse_args()
+        updated_book = _get_books_from_db(book_id)
+        updated_book.title = args_put["title"]
+        updated_book.author = args_put["author"]
+        updated_book.number_of_pages = args_put["number_of_pages"]
+        updated_book.publication_language = args_put["publication_language"]
+        updated_book.publication_date = args_put["publication_date"]
+        updated_book.book_cover_link = args_put["book_cover_link"]
+        updated_book.isbn = args_put["isbn"]
+        _update_db()
+
+    def delete(self, book_id):
+        delete_book = _get_books_from_db(book_id)
+        _delete_from_db(delete_book)
 
 
 class GetBookFromApi(Resource):
@@ -61,9 +64,12 @@ class GetBookFromApi(Resource):
         return data
 
 
-def _get_books_from_db():
+def _get_books_from_db(filters=None):
     try:
-        books = Book.query.all()
+        if filters is None:
+            books = Book.query.all()
+        else:
+            books = Book.query.filter(Book.id == filters).first()
     except exc.SQLAlchemyError:
         message = "Cannot conect with db check your connection string"
         return exc.SQLAlchemyError, message
@@ -73,7 +79,30 @@ def _get_books_from_db():
 
 def _add_to_db(book_object):
     db.session.add(book_object)
-    db.session.commit()
+    _update_db()
+
+
+def _update_db():
+    try:
+        db.session.commit()
+    except exc.IntegrityError:
+        render_template("list_of_books_api.html")
+
+
+def _delete_from_db(book_object):
+    db.session.delete(book_object)
+    _update_db()
+
+
+def _add_arguments_to_post_put_response(required_post_args: reqparse.RequestParser):
+    required_post_args.add_argument("title", type=str, required=True)
+    required_post_args.add_argument("author", type=str, required=True)
+    required_post_args.add_argument("number_of_pages", type=int, required=True)
+    required_post_args.add_argument("publication_language", type=str, required=True)
+    required_post_args.add_argument("publication_date", type=str, required=True)
+    required_post_args.add_argument("book_cover_link", type=str, required=True)
+    required_post_args.add_argument("isbn", type=str, required=True)
+    return required_post_args
 
 
 def _get_book_from_db_using_filter(filters, value):
@@ -98,5 +127,6 @@ def _get_book_from_db_using_filter(filters, value):
 api.add_resource(GetListBooks, "/test")
 api.add_resource(GetBook, "/test/<filters>/<value>")
 api.add_resource(AddBook, "/test/add")
+api.add_resource(UpdateBook, "/test/update/<book_id>")
 api.add_resource(GetBookFromApi, "/test/api/<key_word>/<key>")
 
